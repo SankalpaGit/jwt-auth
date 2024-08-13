@@ -1,17 +1,22 @@
-const express= require('express'); // importing the express module
-const dotenv = require('dotenv');
-const jwt= require('jsonwebtoken');
+const express = require('express');
+const sequelize = require('./models');
+require('dotenv').config();
 
+const app = express();
+app.use(express.json());
 
-const app = express(); //assigning the express app instance 
+// Use the auth routes
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
 
-dotenv.config() // Set up Global configuration access
-
-let PORT = process.env.PORT || 5000;
-app.listen(PORT, ()=>{
-    console.log(`server is listening on ${PORT}`);
+app.get('/', (req, res) => {
+    res.send('Hello, JWT Auth!');
 });
 
-app.post("/", (req, res)=>{
-    res.render('generateToken');
-})
+const PORT = process.env.PORT || 5000;
+
+sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+});
