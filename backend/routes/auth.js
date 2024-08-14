@@ -8,23 +8,34 @@ const router = express.Router();
 
 // Register a new user
 router.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-  
-    try {
-      const existingUser = await User.findOne({ where: { username } });
-      if (existingUser) {
-        return res.status(400).json({ message: 'Username already exists' });
-      }
-  
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await User.create({ username, password: hashedPassword });
-  
-      res.status(201).json({ message: 'Registration successful' });
-    } catch (error) {
-      console.error('Error during registration:', error);
-      res.status(500).json({ message: 'An error occurred during registration' });
+  const { username, password, gmail } = req.body;
+
+  try {
+    // Check if the username already exists
+    const existingUser = await User.findOne({ where: { username } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Username already exists' });
     }
-  });
+
+    // Check if the Gmail already exists
+    const existingGmail = await User.findOne({ where: { gmail } });
+    if (existingGmail) {
+      return res.status(400).json({ message: 'Gmail already exists' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    await User.create({ username, password: hashedPassword, gmail });
+
+    res.status(201).json({ message: 'Registration successful' });
+  } catch (error) {
+    console.error('Error during registration:', error);
+    res.status(500).json({ message: 'An error occurred during registration' });
+  }
+});
+
   
 
 // User login

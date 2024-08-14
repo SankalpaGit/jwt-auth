@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', { username, password });
       localStorage.setItem('token', res.data.token);
-      alert('Login successful');
+      setMessage('Login successful, redirecting...');
+      setMessageType('success');
+
+      // Redirect to home page after 2 seconds
+      setTimeout(() => {
+        navigate('/home');
+      }, 2000);
     } catch (err) {
       console.error(err);
-      alert('Login failed');
+      setMessage('Username or password incorrect');
+      setMessageType('error');
     }
   };
 
@@ -21,6 +33,11 @@ function Login() {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
+        {message && (
+          <div className={`mb-4 p-2 rounded ${messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+            {message}
+          </div>
+        )}
         <div className="mb-4">
           <label className="block text-gray-700">Username:</label>
           <input

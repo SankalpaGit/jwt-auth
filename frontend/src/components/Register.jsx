@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useHistory if using React Router
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -8,6 +9,8 @@ function Register() {
   const [gmail, setGmail] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
+
+  const navigate = useNavigate(); // Initialize Navigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,12 +30,17 @@ function Register() {
       });
 
       if (response.status === 201) {
-        setMessage('Registration successful');
+        setMessage('Registration successful wait a sec');
         setMessageType('success');
+
+        // Redirect to login page after 2 seconds
+        setTimeout(() => {
+          navigate('/login'); // Use history.push for navigation
+        }, 2000);
       }
     } catch (err) {
       if (err.response && err.response.status === 400) {
-        setMessage('Registration failed: Username or Gmail might already exist');
+        setMessage('Registration failed: Use Unique Gmail or Username');
       } else {
         setMessage('Registration failed: An error occurred');
       }
@@ -43,14 +51,14 @@ function Register() {
   return (
     <div className="flex justify-evenly flex-col lg:flex-row min-h-screen bg-gray-100">
       {/* Left Section */}
-      <div className="lg:w-5/12 flex flex-col justify-center items-start p-8 lg:p-12 lg:ml-12 ">
-        <h1 className="text-4xl lg:text-5xl font-bold mb-2">Welcome to <span className="text-blue-600">BookStore</span></h1>
+      <div className="lg:w-6/12 flex flex-col justify-center items-start p-8 lg:p-12 lg:ml-12  ">
+        <h1 className="text-4xl lg:text-5xl font-bold mb-2 ">Welcome to <span className="text-blue-600">पुस्तकालय</span></h1>
         <p className="text-lg lg:text-xl text-gray-700">Your digital library awaits. Register to start exploring!</p>
       </div>
 
       {/* Right Section */}
       <div className="lg:w-7/12 flex justify-center items-center p-4 lg:p-0 ">
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border-2 border-blue-300   hover:border-blue-500 transition-colors duration-300">
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border-2 border-blue-300 hover:border-blue-500 transition-colors duration-300">
           <h2 className="text-2xl font-semibold text-center mb-6">Register</h2>
           {message && (
             <div className={`mb-4 p-2 rounded ${messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
