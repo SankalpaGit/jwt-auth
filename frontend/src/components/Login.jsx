@@ -10,24 +10,32 @@ function Login() {
 
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { username, password });
-      localStorage.setItem('token', res.data.token);
-      setMessage('Login successful, redirecting...');
-      setMessageType('success');
+  // Login component (React)
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post('http://localhost:5000/api/auth/login', { username, password });
+    localStorage.setItem('token', res.data.token);
+    const isAdmin = res.data.isAdmin;
 
-      // Redirect to home page after 2 seconds
-      setTimeout(() => {
+    setMessage('Login successful, redirecting...');
+    setMessageType('success');
+
+    // Redirect based on role
+    setTimeout(() => {
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
         navigate('/home');
-      }, 2000);
-    } catch (err) {
-      console.error(err);
-      setMessage('Username or password incorrect');
-      setMessageType('error');
-    }
-  };
+      }
+    }, 2000);
+  } catch (err) {
+    console.error(err);
+    setMessage('Username or password incorrect');
+    setMessageType('error');
+  }
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
