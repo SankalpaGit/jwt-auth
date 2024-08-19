@@ -1,7 +1,9 @@
+// ./index.js
+// this is not server index.js  this is for creating instances of sequelize 
+
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-// Create a new Sequelize instance for connecting to the database
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,

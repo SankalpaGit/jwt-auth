@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -8,34 +8,42 @@ function Login() {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const location = useLocation(); // Initialize useLocation
 
-  // Login component (React)
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await axios.post('http://localhost:5000/api/auth/login', { username, password });
-    localStorage.setItem('token', res.data.token);
-    const isAdmin = res.data.isAdmin;
+  // Check if there's a message passed from redirect
+  React.useEffect(() => {
+    if (location.state?.message) {
+      setMessage(location.state.message);
+      setMessageType('error'); // Set message type based on the situation
+    }
+  }, [location]);
 
-    setMessage('Login successful, redirecting...');
-    setMessageType('success');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/login', { username, password });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data));
+      const isAdmin = res.data.isAdmin;
 
-    // Redirect based on role
-    setTimeout(() => {
-      if (isAdmin) {
-        navigate('/admin');
-      } else {
-        navigate('/home');
-      }
-    }, 2000);
-  } catch (err) {
-    console.error(err);
-    setMessage('Username or password incorrect');
-    setMessageType('error');
-  }
-};
+      setMessage('Login successful, redirecting...');
+      setMessageType('success');
 
+      // Redirect based on role
+      setTimeout(() => {
+        if (isAdmin) {
+          navigate('/admin');
+        } else {
+          navigate('/home');
+        }
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      setMessage('Username or password incorrect');
+      setMessageType('error');
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -69,6 +77,7 @@ const handleSubmit = async (e) => {
         <button
           type="submit"
           className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={messageType === 'success'}
         >
           Login
         </button>

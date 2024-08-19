@@ -7,13 +7,22 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+  
 // Use the auth routes
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
-app.get('/', (req, res) => {
-    res.send('Hello, JWT Auth!');
-});
+const bookRoutes = require('./routes/bookRoutes'); // Adjust the path as necessary
+app.use('/api/books', bookRoutes);
+
+
+sequelize.sync() //check if the sequelize is syncing or not
+  .then(() => {
+    console.log("Database synced successfully.");
+  })
+  .catch((error) => {
+    console.error("Error syncing the database: ", error);
+  });
 
 const PORT = process.env.PORT || 5000;
 
