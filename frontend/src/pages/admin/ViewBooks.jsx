@@ -1,11 +1,16 @@
 import React from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { IoMdAddCircle } from "react-icons/io";
 
 const ViewBooks = () => {
   return (
     <div className="bg-white p-6 rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-4">List of Books</h2>
-      <table className="min-w-full bg-white border-collapse">
+      <div className='flex justify-between items-center'>
+        <h2 className="text-2xl font-bold mb-4">List of Books</h2>
+        <button className='bg-blue-700 text-white p-2 gap-x-2 rounded-md flex items-center text-center'><IoMdAddCircle />
+        Add Books</button>
+      </div>
+      <table className="min-w-full bg-white border-collapse mt-2">
         <thead>
           <tr className="bg-orange-100">
             <th className="py-2 px-4 border border-gray-300 text-center text-gray-600">ID</th>
