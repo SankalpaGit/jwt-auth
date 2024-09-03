@@ -5,12 +5,12 @@ module.exports = function(upload) {
 
   // Add a new book
   router.post('/add', upload.single('image'), async (req, res) => {
-    const { title, author, isbn, quantity, status, publishedDate } = req.body; // Add publishedDate here
+    const { title, author, isbn, quantity, status, publishedDate, description } = req.body; // Add publishedDate here
     
     // Handle uploaded file
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
   
-    if (!title || !author || !isbn || !quantity || !status || !publishedDate) {
+    if (!title || !author || !isbn || !quantity || !status || !publishedDate || !description) {
       return res.status(400).json({ message: 'Please fill in all required fields.' });
     }
   
@@ -21,6 +21,7 @@ module.exports = function(upload) {
         isbn,
         quantity,
         status,
+        description,
         publishedDate, // Include publishedDate in the creation
         images: imageUrl
       });
